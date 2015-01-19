@@ -83,7 +83,7 @@ class XMLNode(object):
     
     def __xml_update(self, args, kwargs):
         for arg in args:
-            if not isinstance(arg, basestring):
+            if not isinstance(arg, str):
                 raise ValueError(
                     "Non-named arguments should be string only, not %r" \
                                     % (arg,))
@@ -91,18 +91,18 @@ class XMLNode(object):
         self.__childs.append("".join(args))
     
         for key, val in kwargs.items():
-            if not isinstance(val, basestring):
+            if not isinstance(val, str):
                 raise ValueError(
                     "Attribute values should be string only, not %r" \
                                     % (val,))
         self.__attrs.update(kwargs)
     
     def __setitem__(self, name, val):
-        if not isinstance(val, basestring):
+        if not isinstance(val, str):
             raise ValueError("Attribute names should be string only, not %r" \
                                 % (val,))
 
-        if not isinstance(val, basestring):
+        if not isinstance(val, str):
             raise ValueError("Attribute values should be string only, not %r" \
                                 % (val,))
         
@@ -117,11 +117,9 @@ class XMLNode(object):
         self.__xml_update(args, kwargs)
         return self
     
-    def __unicode__(self):
-        return str(self).decode(self.__document()['encoding'])
-        
     def __str__(self):
-        return tostring(~self, self.__document()['encoding'])
+        return tostring(~self, self.__document()['encoding']).decode(
+            self.__document()['encoding'])
     
     def __invert__(self):
         builder = self.__document()['builder']()
@@ -130,7 +128,7 @@ class XMLNode(object):
     
     def __child_tag_count(self):
         return len([child for child in self.__childs
-                        if not isinstance(child, basestring)])
+                        if not isinstance(child, str)])
         
     def __toxml(self, builder, level):
         if self.__document()['formatted']:    
@@ -142,7 +140,7 @@ class XMLNode(object):
         builder.start(self.__tag, self.__attrs)
         
         for child in self.__childs:
-            if isinstance(child, basestring):
+            if isinstance(child, str):
                 builder.data(child)
             else:
                 child.__toxml(builder, level + 1)
